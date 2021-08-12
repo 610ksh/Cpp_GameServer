@@ -25,3 +25,5 @@ bld/
 
 # Added by SungHoon
 *.vcxproj
+*.filters
+*.user
