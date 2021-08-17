@@ -3,6 +3,5 @@
 
 void HelloWorld()
 {
-	cout << "Hello Cpp Server!" << endl;
+	cout << "Hello Server!" << endl;
 }
-

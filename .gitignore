@@ -24,6 +24,3 @@ bld/
 #wwwroot/
 
 # Added by SungHoon
-*.vcxproj
-*.filters
-*.user
