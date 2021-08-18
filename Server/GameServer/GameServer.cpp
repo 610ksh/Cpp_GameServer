@@ -10,6 +10,8 @@ mutex m;
 queue<int32> q;
 HANDLE handle;
 
+std::condition_variable cv;
+
 void Producer()
 {
 	while (true)
@@ -19,8 +21,8 @@ void Producer()
 			q.push(100);
 		}
 
-		::SetEvent(handle); // 이벤트를 signal 상태로 바꿔줌(true)
-		this_thread::sleep_for(100ms);
+		// ﻿조건변수를 통해 다른 쓰레드에게 통지
+		cv.notify_one();
 	}
 }
 
@@ -28,19 +30,21 @@ void Consumer()
 {
 	while (true)
 	{
-		// 핸들과 대기시간을 넣어줌. 무한(-1)대기를 넣어보자.
-		::WaitForSingleObject(handle, INFINITE); // signal 상태가 되면 작동함. 그게 아니면 잠듦.
-		// 이때 autoReset 이라면, signal을 받아서 작동한뒤에 다시 현재 상태를 Non-Signal(false)로 바꿔줌. 자동!
-		// 만약 TRUE로 해놔서 ManualReset 방식이었다면, 직접 바꿔줘야함. 아래 ::ResetEvent(handle)로 불꺼짐.
-		// ::ResetEvent(handle);
-
 		unique_lock<mutex> lock(m);
-		// 큐에 존재한다면
-		if (q.empty() == false)
+		// 람다를 통해 조건변수를 설정함. 언제 탈출하는지 조건을 설정.
+		// 일반 함수를 넣어도 됨(Callable형태)
+		cv.wait(lock, []() {return q.empty() == false; });
+		// 내부구조 순서
+		// 1. Lock을 잡으려고 시도.
+		// 2. 조건을 확인함.
+		// - 만족하면, 빠져나와서 이어서 코드를 실행.
+		// - 조건이 만족하지 않으면, Lock을 풀어주고 대기 상태로 빠짐★
+
+		//if (q.empty() == false)
 		{
 			int32 data = q.front();
 			q.pop();
-			cout << data << endl; // 락을 잡고 cout은 좋지 않다.
+			cout << q.size() << endl;
 		}
 	}
 }
