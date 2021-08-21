@@ -11,6 +11,7 @@
 
 LockQueue<int32> q;
 LockStack<int32> s;
+LockFreeStack<int32> s2;
 
 void Push()
 {
@@ -18,7 +19,7 @@ void Push()
 	{
 		// 100 미만의 랜덤 변수
 		int32 value = rand() % 100;
-		q.Push(value);
+		s2.Push(value);
 
 		this_thread::sleep_for(10ms); // 0.1초
 	}
@@ -29,11 +30,11 @@ void Pop()
 	while (true)
 	{
 		int32 data = 0;
-		q.WaitPop(OUT data);
-		cout << data << endl;
+		//s2.WaitPop(OUT data);
+		//cout << data << endl;
 
-		/*if(q.TryPop(OUT data))
-			cout << data << endl;*/
+		if(s2.TryPop(OUT data))
+			cout << data << endl;
 	}
 }
 
