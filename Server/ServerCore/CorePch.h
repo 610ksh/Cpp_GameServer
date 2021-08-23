@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "CoreGlobal.h"
 #include "CoreTLS.h"
+#include "CoreMacro.h"
 
 #include <vector>
 #include <list>
@@ -15,3 +16,7 @@
 
 #include <iostream>
 using namespace std;
+
+#include <Windows.h> // for ::GetTickCount64()
+
+#include "Lock.h"
