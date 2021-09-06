@@ -4,4 +4,4 @@
 // 전방선언과 동시에 선언
 extern class ThreadManager* GThreadManager;
 
-
+extern class DeadLockProfiler* GDeadLockProfiler;
